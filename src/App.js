@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {calcAddPoint, calcDoublePoint, calcMultiplyScore, calcGroupedPoints} from './lib/pointCalculations' 
+import {calcMultiplyScore, calcGroupedPoints} from './lib/pointCalculations' 
 import {MultiplyBy} from './Components/MultiplyBy'
 import {flipFalse} from './lib/flipFalse'
 import { GroupedCards } from './Components/GroupedCards';
@@ -21,36 +21,30 @@ class App extends Component {
         ['Writing', 'Medicine', 'Poetry', 'Art', 'Music']
       ]
     }
-    this.handleAddPoint = this.handleAddPoint.bind(this)
-    this.handleDoublePoint = this.handleDoublePoint.bind(this)
+    this.handleNameChange = this.handleNameChange.bind(this)
     this.handleMultiplyScore = this.handleMultiplyScore.bind(this)
     this.callFlipFalse = this.callFlipFalse.bind(this)
     this.handleMoreGrouped = this.handleMoreGrouped.bind(this)
+    this.handleNonFood = this.handleNonFood.bind(this)
   }
 
-  handleAddPoint = (e) => {
-    let pointId = e.target.id
-    if (!this.state.clicked.includes(pointId)) {
-      this.state.clicked.push(pointId)
-      this.setState({
-        points: calcAddPoint(this.state)
-      })  
+  handleNameChange = (e) => {
+    let name = e.target.value
+    if (e.target.value === "") {
+      name = "Human Player"
     }
-  }
-  
-  handleDoublePoint = () => {
-    let pointsToDouble = this.state.points
     this.setState({
-      points: calcDoublePoint(pointsToDouble)
+      user: name
     })
   }
 
+  
   callFlipFalse = (data, idx) => {
     let multiplierCopy = [...this.state.multipliers]
     multiplierCopy[idx][2] = flipFalse(data)
-    this.setState((prevState) => ({
+    this.setState({
       multipliers: multiplierCopy
-    }))
+    })
   }
 
   handleMultiplierPoints = (idx) => {
@@ -95,7 +89,6 @@ class App extends Component {
     if (!this.state.clicked[groupIndex]) {
       this.state.clicked.push([])
     }
-    console.log("pointId", pointId === undefined)
     if (pointId === undefined) {
       return
     }
@@ -108,13 +101,10 @@ class App extends Component {
       return calcGroupedPoints(row)
     })
     let totalPoints = rowPoints.reduce((tot,idx) => tot + idx)
-    console.log('what are we sending? :',rowPoints);
     this.setState({
       points: totalPoints
     })
   }
-
-// calcGroupedPoints(this.state.clicked[groupIndex])
 
   handleMoreGrouped = () => {
     this.handleGroupedPoints()
@@ -122,7 +112,6 @@ class App extends Component {
     let currentState = [...this.state.groupedCards]
     let groupIndex = currentState.length
     let rowToMap = currentState[0]
-    console.log("row to map: ", rowToMap)
     let groupedToAdd = []
     rowToMap.map(item => {
       return groupedToAdd.push(`${item}  ${groupIndex}`)
@@ -131,6 +120,29 @@ class App extends Component {
     this.setState({
       groupedCards: currentState
     })
+  }
+
+  handleNonFood = (e) => {
+    e.preventDefault()
+    if(this.state.nonFoodPoints > 0) {
+      this.removeNonFood()
+    }
+    let nonFoodPoints = parseInt(document.getElementById('nonFood').value)
+    this.setState((prevState) => ({
+      nonFoodPoints: nonFoodPoints,
+      points: prevState.points + nonFoodPoints
+    }),() => {
+      this.handleDisplayScore()
+      console.log('points :',this.state.points);
+    })
+  }
+
+  removeNonFood = () => {
+    let nonFoodPoints = this.state.nonFoodPoints
+    this.setState((prevState) => ({
+      points: prevState.points - nonFoodPoints,
+      nonFoodPoints: 0
+    }))
   }
   
   handleDisplayScore = (e) => {
@@ -160,7 +172,11 @@ class App extends Component {
             Basic Scoring
             </h3>
             <label htmlFor="name">Your Name:</label>
-            <input type="text" id="name" name="user_name" />
+            <input 
+              type="text" 
+              id="name" 
+              name="user_name" 
+              onChange={this.handleNameChange}/>
             <GroupedCards
             points={this.state.points}
             groupedCards={this.state.groupedCards}
@@ -185,6 +201,18 @@ class App extends Component {
             multipliers={this.state.multipliers}
             handleMultiplyScore={this.handleMultiplyScore}
           />
+          <form>
+            <label htmlFor="nonFood">Non-food Resources:</label>
+            <input
+              type="number"
+              id="nonFood"
+            />
+            <input
+              type="submit"
+              value="Add Non-food"
+              onClick={this.handleNonFood}
+            />
+          </form>
         </fieldset>
       </div>
     );
@@ -195,6 +223,13 @@ export default App;
 
 
 /*
+  handleDoublePoint = () => {
+    let pointsToDouble = this.state.points
+    this.setState({
+      points: calcDoublePoint(pointsToDouble)
+    })
+  }
+
   <label htmlFor="double-point">Double Points</label>
   <input 
     type="checkbox"

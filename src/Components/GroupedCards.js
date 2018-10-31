@@ -21,30 +21,3 @@ export const GroupedCards = (props) => {
     })
   )
 }
-
-/*
-  <label htmlFor="one-point">1 Point</label>
-  <input 
-    type="checkbox" 
-    id="one-point" 
-    name="one-point" 
-    points={this.state.points}
-    onChange={this.handleAddPoint}
-  />
-  <label htmlFor="two-point">1 Point</label>
-  <input 
-    type="checkbox" 
-    id="two-point" 
-    name="two-point" 
-    points={this.state.points}
-    onChange={this.handleAddPoint}
-  />
-  <label htmlFor="three-point">1 Point</label>
-  <input 
-    type="checkbox" 
-    id="three-point" 
-    name="three-point" 
-    points={this.state.points}
-    onChange={this.handleAddPoint} 
-  />
-*/
