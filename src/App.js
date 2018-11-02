@@ -3,6 +3,7 @@ import {calcMultiplyScore, calcGroupedPoints} from './lib/pointCalculations'
 import {MultiplyBy} from './Components/MultiplyBy'
 import {flipFalse} from './lib/flipFalse'
 import { GroupedCards } from './Components/GroupedCards';
+import './styles/styles.scss'
 
 class App extends Component {
   constructor(props) {
