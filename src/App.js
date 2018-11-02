@@ -169,7 +169,7 @@ class App extends Component {
         <fieldset>
           <form onSubmit = {this.handleFormSubmission}>
             <h3>
-            Basic Scoring
+            Stone Age Scoring
             </h3>
             <label htmlFor="name">Your Name:</label>
             <input 
