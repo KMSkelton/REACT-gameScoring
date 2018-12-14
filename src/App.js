@@ -3,6 +3,7 @@ import {calcMultiplyScore, calcGroupedPoints} from './lib/pointCalculations'
 import {MultiplyBy} from './Components/MultiplyBy'
 import {flipFalse} from './lib/flipFalse'
 import { GroupedCards } from './Components/GroupedCards';
+import styles from './styles/styles.scss'
 
 class App extends Component {
   constructor(props) {
@@ -163,9 +164,7 @@ class App extends Component {
   render() {
     return (
       <div id="app">
-        <p>One day I hope this will be universal for those games that have complicated scoring.
-          For now, a smaller, planet-sized chunk of games will have to suffice.
-        </p>
+        <p>This is MVP for a larger game scoring app that I am working on.</p>
         <fieldset>
           <form onSubmit = {this.handleFormSubmission}>
             <h3>
