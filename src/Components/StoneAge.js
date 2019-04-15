@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 
-import {calcMultiplyScore, calcGroupedPoints} from '../lib/pointCalculations' 
-import {flipFalse} from '../lib/flipFalse'
+import { calcGroupedPoints } from '../lib/pointCalculations' 
+import { flipMultiplierBoolean } from '../lib/flipMultiplierBoolean'
+import { handleNameChange } from '../lib/handleNameChange'
+import { handleOops } from '../lib/handleOops'
+import { handleMultiplierPoints } from '../lib/handleMultiplierPoints'
 
 import {MultiplyBy} from './MultiplyBy'
 import { GroupedCards } from './GroupedCards';
@@ -10,7 +13,7 @@ class StoneAge extends Component {
   constructor(props) {
     super(props)  
     this.state = {
-      user: "Player One",
+      user: this.props.user,
       clicked: [[]],
       points: 0,
       multipliers: [
@@ -23,50 +26,34 @@ class StoneAge extends Component {
         ['Writing', 'Medicine', 'Poetry', 'Art', 'Music']
       ]
     }
-    this.handleNameChange = this.handleNameChange.bind(this)
-    this.handleMultiplyScore = this.handleMultiplyScore.bind(this)
-    this.callFlipFalse = this.callFlipFalse.bind(this)
+    this.callFlipMulitpierBoolean = this.callFlipMulitpierBoolean.bind(this)
     this.handleMoreGrouped = this.handleMoreGrouped.bind(this)
     this.handleNonFood = this.handleNonFood.bind(this)
+    this.localHandleNameChange = this.localHandleNameChange.bind(this)
+    this.localHandleOops = this.localHandleOops.bind(this)
+    this.handleMultiplyScore = this.handleMultiplyScore.bind(this)
   }
-  handleNameChange = (e) => {
-    let name = e.target.value
-    if (e.target.value === "") {
-      name = "Human Player"
-    }
-    this.setState({
-      user: name
-    })
+  
+  // let's use functional setState
+  localHandleNameChange = (e) => {
+    this.setState(handleNameChange(e))
   }
 
-  
-  callFlipFalse = (data, idx) => {
+  localHandleOops = function(idx) {
+    this.setState(handleOops(idx, this.state.points))
+    this.handleDisplayScore()
+  }
+
+  callFlipMulitpierBoolean = (data, idx) => {
     let multiplierCopy = [...this.state.multipliers]
-    multiplierCopy[idx][2] = flipFalse(data)
+    multiplierCopy[idx][2] = flipMultiplierBoolean(data)
     this.setState({
       multipliers: multiplierCopy
     })
   }
 
-  handleMultiplierPoints = (idx) => {
-    let multipliedPoints = calcMultiplyScore(document.getElementsByClassName('mult-a')[idx].value, document.getElementsByClassName('mult-b')[idx].value)
-    if (isNaN(multipliedPoints)) {
-    multipliedPoints = 0
-    }
-    return multipliedPoints
-  }
-
-  handleOops = (idx) => {
-    let removePoints = this.handleMultiplierPoints(idx)
-    this.setState((prevState) => ({
-      points: prevState.points - removePoints,
-    }), () => {
-      this.handleDisplayScore()
-    })
-  }
-
   handleMultiplyScore = (idx) => {
-    let newPoints = this.handleMultiplierPoints(idx)
+    let newPoints = handleMultiplierPoints(idx)
     let multiplierCopy = [...this.state.multipliers]
     if (multiplierCopy[idx][2]){
       this.setState((prevState) => ({
@@ -75,9 +62,9 @@ class StoneAge extends Component {
         this.handleDisplayScore()
       })
     } else {
-      this.handleOops(idx)
+      this.localHandleOops(idx)
     }
-    this.callFlipFalse(multiplierCopy[idx][2], idx)
+    this.callFlipMulitpierBoolean(multiplierCopy[idx][2], idx)
   }
     
   handleGroupedPoints = (e) => {
@@ -134,7 +121,6 @@ class StoneAge extends Component {
       points: prevState.points + nonFoodPoints
     }),() => {
       this.handleDisplayScore()
-      console.log('points :',this.state.points);
     })
   }
 
@@ -173,8 +159,10 @@ class StoneAge extends Component {
           <input 
             type="text" 
             id="name" 
-            name="user_name" 
-            onChange={this.handleNameChange}/>
+            onChange={this.localHandleNameChange}
+            user={this.props.user} 
+            placeholder={this.props.user}
+            />
           <GroupedCards
           points={this.state.points}
           groupedCards={this.state.groupedCards}

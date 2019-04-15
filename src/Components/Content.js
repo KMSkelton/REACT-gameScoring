@@ -9,7 +9,9 @@ const Content = (props) => (
         key={index}
         path={route.path}
         exact={route.exact}
-        component={route.content}
+        render = { (routeProps) => (
+          <route.content {...routeProps} {...props} />
+        )}
       />
     ))}
   </div>
